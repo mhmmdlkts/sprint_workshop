@@ -1,45 +1,94 @@
 enchant();
-
 var game;
 var man;
 var map;
 var sprites;
 
-var Stone = enchant.Class.create(enchant.Sprite, {
+var Element = enchant.Class.create(enchant.Sprite, {
+  initialize: function(x, y, type){      
+    if (map[x][y] != 0 && type == 'fire') {
+      map[x][y].explode();
+      this.burned = true;
+    }
+    enchant.Sprite.call(this, 30, 30);
+    this.xCoord = x; this.yCoord = y;
+    this.x = this.xCoord*30; this.y = this.yCoord*30;
+    if (this.itemtype == undefined)
+      this.image = game.assets['images/'+type+'.jpg'];
+    else this.image = game.assets['images/'+type+this.itemtype+'.jpg'];
+    this.type = type;
+    game.rootScene.addChild(this);
+    if (map[x][y] == 0) map[x][y] = this;
+    if (this.timer != 0) {
+      this.tick = 0;
+      this.addEventListener('enterframe', function(){
+        this.tick++;
+        if (this.tick > this.timer*game.fps) {
+          this.explode();
+        }
+      });
+    }
+  }, 
+  explode: function() {
+    game.rootScene.removeChild(this);
+    map[this.xCoord][this.yCoord] = 0;
+    this.final();
+  },
+  final: function() {}
+
+});
+
+var Stone = enchant.Class.create(Element, {
     initialize: function(x, y){
-        enchant.Sprite.call(this, 30, 30);
-        this.image = game.assets['http://jsrun.it/assets/6/P/h/0/6Ph0B.jpg'];
-        this.x = x; this.y = y;
-        game.rootScene.addChild(this);
+        Element.call(this, x, y, 'stone');
     }
 });
 
-var Block = enchant.Class.create(enchant.Sprite, {
+var Block = enchant.Class.create(Element, {
     initialize: function(x, y){
-        enchant.Sprite.call(this, 30, 30);
-        this.image = game.assets['http://jsrun.it/assets/2/P/y/I/2PyID.jpg'];
-        this.x = x; this.y = y;
-        game.rootScene.addChild(this);
+        Element.call(this, x, y, 'block');
+    },
+    final: function() {
+      if (Math.random() > 0.2) {
+        item = new Item(this.xCoord, this.yCoord);
+      }
     }
 });
 
-var Man = enchant.Class.create(enchant.Sprite, {
+var Item = enchant.Class.create(Element, {
     initialize: function(x, y){
-        enchant.Sprite.call(this, 30, 30);
-        this.image = game.assets['http://jsrun.it/assets/i/1/I/H/i1IHV.png'];
-        this.xCoord = x; this.yCoord = y;
-        this.x = this.xCoord*30;
-        this.y = this.yCoord*30;
+      this.itemtype = Math.floor(Math.random() * 2)+1;
+      Element.call(this, x, y, 'item');
+    }
+});
+
+var Man = enchant.Class.create(Element, {
+    initialize: function(x, y){
+        Element.call(this, x, y, 'man');
+        map[x][y] = 0;
         this.bombs = 1;
         this.bombSize = 2;
-        game.rootScene.addChild(this);
     },
     move: function(x, y){
-      if (this.xCoord+x >= 0 && this.yCoord+y >= 0 && map[this.xCoord+x][this.yCoord+y] == 0) {
-        this.xCoord += x;
-        this.yCoord += y;
-        this.x = this.xCoord*30;
-        this.y = this.yCoord*30;
+      if (inBounds(this.xCoord+x, this.yCoord+y, false)) {
+        this.xCoord += x; this.yCoord += y;
+        this.x = this.xCoord*30; this.y = this.yCoord*30;
+      }
+      if (map[this.xCoord][this.yCoord] != 0) {
+        if (map[this.xCoord][this.yCoord].type == 'item') {
+          switch(map[this.xCoord][this.yCoord].itemtype) {
+            case 1: // fire up
+              this.bombSize++;
+              break;
+            case 2: // bomb up
+              this.bombs++;
+              break;
+          }
+          map[this.xCoord][this.yCoord].explode();
+        } else if (map[this.xCoord][this.yCoord].type == 'fire') {
+          alert('game over');
+          game.stop();
+        }
       }
     },
     putBomb: function() {
@@ -50,75 +99,42 @@ var Man = enchant.Class.create(enchant.Sprite, {
     }
 });
 
-var Bomb = enchant.Class.create(enchant.Sprite, {
+var Bomb = enchant.Class.create(Element, {
   initialize: function(x, y) {
-    enchant.Sprite.call(this, 30, 30);
-    this.image = game.assets['http://jsrun.it/assets/f/8/j/z/f8jz5.jpg'];
-    this.xCoord = x; this.yCoord = y;
-    this.x = this.xCoord*30;
-    this.y = this.yCoord*30;
-    this.tick = 0;
-    map[x][y] = 3;
-    game.rootScene.addChild(this);
-    this.addEventListener('enterframe', function(){
-      this.tick++;
-      if (this.tick > 2*game.fps) {
-        this.explode();
-      }
-    });
+    this.timer = 2;
+    Element.call(this, x, y, 'bomb');
   },
-  explode: function() {
+  final: function() {
     man.bombs++;
-    map[this.xCoord][this.yCoord] = 0;
     fire = new Fire(this.xCoord, this.yCoord);
+    var burned = [false, false, false, false];
+    var dirs = [[-1,0],[1,0],[0,-1],[0,1]];
     for (var i=1; i <= man.bombSize; i++) {
-      fire = new Fire(this.xCoord-i, this.yCoord); 
-      if (fire.spread == false) break;
+      for (var dir=0; dir < 4; dir++) {
+        if (!inBounds(this.xCoord+(i*dirs[dir][0]), this.yCoord+(i*dirs[dir][1]), true)) burned[dir] = true; 
+        else if (!burned[dir]) {
+          fire = new Fire(this.xCoord+(i*dirs[dir][0]), this.yCoord+(i*dirs[dir][1]));
+          if (fire.burned) burned[dir]=true;
+        }
+      }
     }
-    for (var i=1; i <= man.bombSize; i++) {
-      fire = new Fire(this.xCoord+i, this.yCoord); 
-      if (fire.spread == false) break;
-    }
-    for (var i=1; i <= man.bombSize; i++) {
-      fire = new Fire(this.xCoord, this.yCoord+i); 
-      if (fire.spread == false) break;
-    }
-    for (var i=1; i <= man.bombSize; i++) {
-      fire = new Fire(this.xCoord, this.yCoord-i); 
-      if (fire.spread == false) break;
-    }
-    game.rootScene.removeChild(this);
   }
 });
 
-var Fire = enchant.Class.create(enchant.Sprite, {
+var Fire = enchant.Class.create(Element, {
   initialize: function(x, y) {
-    this.spread = false;
-    
-    if (x < 0 || y < 0) return 0;
-    if (map[x][y] == 1) return 0;
-    
-    enchant.Sprite.call(this, 30, 30);
-    this.image = game.assets['http://jsrun.it/assets/u/n/L/T/unLTr.jpg'];
-    this.xCoord = x; this.yCoord = y;
-    this.x = this.xCoord*30;
-    this.y = this.yCoord*30;
-    this.tick = 0;
-    if (map[x][y] != 0) {
-      game.rootScene.removeChild(sprites[x][y]);
-      sprites[x][y] = 0;
-      this.spread = false;
-    } else {this.spread = true;}
-    map[x][y] = 4;
-    
-    game.rootScene.addChild(this);
-    this.addEventListener('enterframe', function(){
-      this.tick++;
-      if (this.tick > 1*game.fps) {
-        map[this.xCoord][this.yCoord] = 0;
-        game.rootScene.removeChild(this);
-      }
-    });
+    if (x == man.xCoord && y == man.yCoord) {
+      alert('game over');
+      game.stop();
+    }   
+    this.timer = 1;
+    Element.call(this, x, y, 'fire');    
+  }, 
+  explode: function(x,y) {
+    if (map[this.xCoord][this.yCoord].type == 'fire') {
+      map[this.xCoord][this.yCoord] = 0;
+    }
+    game.rootScene.removeChild(this);
   }
 });
 
@@ -133,56 +149,38 @@ window.onload = function() {
        		[1,0,0,0,1,0,0,0,0,1],
        		[0,0,1,0,0,0,0,1,0,0],
        		[0,1,1,1,0,1,1,1,1,0],
-       		[0,0,0,0,0,0,0,0,0,0]];
-       		
-    sprites = [[0,0,0,0,1,0,0,0,0,0],
-          [0,1,0,1,1,0,1,1,1,0],
-        	[0,1,0,0,1,0,0,0,0,0],
-      		[0,1,0,1,0,1,0,1,0,0],
-      		[0,0,0,0,0,0,0,1,0,1],
-      		[1,1,0,1,1,1,0,1,0,1],
-       		[1,0,0,0,1,0,0,0,0,1],
-       		[0,0,1,0,0,0,0,1,0,0],
-       		[0,1,1,1,0,1,1,1,1,0],
-       		[0,0,0,0,0,0,0,0,0,0]];
-	
+       		[0,0,0,0,0,0,0,0,0,0]];	
     game.fps = 24;
-    game.preload('http://jsrun.it/assets/6/P/h/0/6Ph0B.jpg', 'http://jsrun.it/assets/f/8/j/z/f8jz5.jpg', 'http://jsrun.it/assets/i/1/I/H/i1IHV.png', 'http://jsrun.it/assets/2/4/1/x/241xk.jpg', 'http://jsrun.it/assets/u/n/L/T/unLTr.jpg', 'http://jsrun.it/assets/2/P/y/I/2PyID.jpg');
-    // The images used in the game should be preloaded
+    game.preload('images/block.jpg', 'images/bomb.jpg', 'images/man.jpg', 'images/fire.jpg', 'images/grass.jpg', 'images/item1.jpg', 'images/item2.jpg', 'images/stone.jpg');
     
   game.onload = function() {
-    initMap();
-    drawMap();
+      initMap();
       man = new Man(0,0);
     }
     document.onkeydown = keyListener;
-    
     game.start();
 }
 
 function initMap() {
-    // Add blocks to the map
+  // Add stones and blocks to the map
   for (var i=0; i<map.length; i++) {
     for (var n=0; n<map[0].length; n++) {
-      if (map[i][n] == 0) 
-        if (Math.random() > 0.7)
-         	map[i][n] = 2;
+      if (map[i][n] == 1) {
+        map[i][n] = 0;
+       	stone = new Stone(i, n);	
+      } else if (Math.random() > 0.7){
+          block = new Block(i, n);
+        }
     }
   }
 }
 
-function drawMap() {
-  // Add stones and blocks to the map
-for (var i=0; i<map.length; i++) {
-  for (var n=0; n<map[0].length; n++) {
-    if (map[i][n] == 1) {
-     	sprites[i][n] = new Stone(i*30, n*30);	
-    } else if (map[i][n] == 2){
-        sprites[i][n] = new Block(i*30, n*30);
-      }
-  }
-}
-
+function inBounds(x, y, burn) {
+  if (x < 0 || y < 0 || x >= map.length || y >= map[0].length) return false;
+  if (map[x][y] == 0) return true;
+  if (map[x][y].type == 'stone') return false;
+  if ((map[x][y].type == 'block' || map[x][y].type == 'bomb') && burn == false) return false;
+  return true;
 }
 
 function keyListener(e) {
