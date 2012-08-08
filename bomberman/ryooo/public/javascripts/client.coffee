@@ -3,52 +3,55 @@ preload = new PreloadJS()
 fields = 
   b: "./images/block.jpg"
   s: "./images/stone.jpg"
-  o: "./images/bomb.jpg"
-  f: "./images/fire.jpg"
+  o: "./images/bomb.png"
+  f: "./images/fire.png"
   g: "./images/grass.jpg"
-  m: "./images/bomb.jpg"
   c: "./images/chara.png"
+  if: "./images/item2.png"
+  io: "./images/item3.png"
+  e: "./images/item7.png"
 manifest = []
 for key, val of fields
   manifest.push({src: val})
 he.static = new Stage("static")
 he.flow = new Stage('flow')
+he.dead = false
 preload.loadManifest(manifest);
 preload.onComplete = ->
   socket = io.connect('http://localhost:3000/');
-  socket.on('stage init', (ini)->
-    console.log(ini)
+  socket.on 'char dead', ()->
+    he.dead = true
+  socket.on 'stage init', (ini)->
     he.static.objmap = []
     he.flow.objmap = []
     he.flow.chars = {}
     for y, row of ini.map
       he.static.objmap[y] ||= []
-      for x, cell of row
-        setPart(he.static, {x: x, y: y, type: cell})
+      for x, info of row
+        setPart(he.static, {x: x, y: y, type: info.type})
     for y, row of ini.flow
       he.flow.objmap[y] ||= []
-      for x, cell of row
-        setPart(he.flow, {x: x, y: y, type: cell})
+      for x, info of row
+        setPart(he.flow, {x: x, y: y, type: info.type}) if typeof info.type != 'undefined'
     for id, info of ini.char
       if typeof he.flow.chars[id] is 'undefined'
-        setPart(he.flow, {x: info.x, y: info.y, type: 'c'}, id)
+        setPart(he.flow, {x: info.x, y: info.y, type: info.type}, info.id)
       else
         he.flow.chars[id].x = info.x*30
         he.flow.chars[id].y = info.y*30
     setTimeout(->
       he.static.update()
       he.flow.update()
-    , 10)
+    , 20)
   
-  socket.on('stage sync', (diff) ->
-    for info in diff.flow.add
-      setPart(he.flow, {x: info.x, y: info.y, type: info.type})
+  socket.on 'stage sync', (diff) ->
     for info in diff.flow.delete
       delPart(he.flow, {x: info.x, y: info.y, type: info.type})
-    
+    for info in diff.flow.add
+      setPart(he.flow, {x: info.x, y: info.y, type: info.type})
     for id, info of diff.char
       if typeof he.flow.chars[id] is 'undefined'
-        setPart(he.flow, {x: info.x, y: info.y, type: 'c'}, id)
+        setPart(he.flow, {x: info.x, y: info.y, type: info.type}, id)
       else
         he.flow.chars[id].x = info.x*30
         he.flow.chars[id].y = info.y*30
@@ -58,8 +61,10 @@ preload.onComplete = ->
         delete(he.flow.chars[id])
     setTimeout(->
       he.flow.update()
-    , 10)
-  );
+      if he.dead
+        he.dead = false
+        alert('あぼーん')
+    , 20)
   window.document.onkeydown = (e) ->
     code = 's' if e.keyCode == 32
     code = 'l' if e.keyCode == 37
@@ -67,7 +72,6 @@ preload.onComplete = ->
     code = 'r' if e.keyCode == 39
     code = 'd' if e.keyCode == 40
     socket.send(code)
-  )
 
 setPart = (canvas, opt, id) ->
   image = new Bitmap(fields[opt.type])
@@ -75,6 +79,15 @@ setPart = (canvas, opt, id) ->
   image.x = opt.x * 30
   image.y = opt.y * 30
   if typeof id is 'undefined'
-    canvas.objmap[opt.y][opt.x] = canvas.addChild(image)
+    if typeof canvas.objmap[opt.y][opt.x] == 'undefined' || canvas.objmap[opt.y][opt.x] == null
+      canvas.objmap[opt.y][opt.x] = canvas.addChild(image)
   else
     canvas.chars[id] = canvas.addChild(image)
+
+delPart = (canvas, opt, id) ->
+  if typeof id is 'undefined'
+    canvas.removeChild(canvas.objmap[opt.y][opt.x])
+    canvas.objmap[opt.y][opt.x] = null
+  else
+    canvas.removeChild(canvas.chars[id])
+    delete(canvas.chars[id])
