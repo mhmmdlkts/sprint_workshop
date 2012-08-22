@@ -1,0 +1,3 @@
+# view AndroidManifest.xml #generated:7
+-keep class jp.co.happyelements.Todo.Todo { <init>(...); }
+

@@ -1,0 +1,24 @@
+/Users/tomohiro/repositories/sprint_workshop/native/nishimura/gen/jp/co/happyelements/Todo/R.java \
+ : /Users/tomohiro/repositories/sprint_workshop/native/nishimura/res/drawable-hdpi/danbo.jpg \
+/Users/tomohiro/repositories/sprint_workshop/native/nishimura/res/drawable-hdpi/ic_launcher.png \
+/Users/tomohiro/repositories/sprint_workshop/native/nishimura/res/drawable-hdpi/icon.png \
+/Users/tomohiro/repositories/sprint_workshop/native/nishimura/res/drawable-ldpi/danbo.jpg \
+/Users/tomohiro/repositories/sprint_workshop/native/nishimura/res/drawable-ldpi/ic_launcher.png \
+/Users/tomohiro/repositories/sprint_workshop/native/nishimura/res/drawable-ldpi/icon.png \
+/Users/tomohiro/repositories/sprint_workshop/native/nishimura/res/drawable-mdpi/danbo.jpg \
+/Users/tomohiro/repositories/sprint_workshop/native/nishimura/res/drawable-mdpi/ic_launcher.png \
+/Users/tomohiro/repositories/sprint_workshop/native/nishimura/res/drawable-mdpi/icon.png \
+/Users/tomohiro/repositories/sprint_workshop/native/nishimura/res/drawable-xhdpi/danbo.jpg \
+/Users/tomohiro/repositories/sprint_workshop/native/nishimura/res/drawable-xhdpi/ic_launcher.png \
+/Users/tomohiro/repositories/sprint_workshop/native/nishimura/res/drawable-xhdpi/icon.png \
+/Users/tomohiro/repositories/sprint_workshop/native/nishimura/res/layout/main.xml \
+/Users/tomohiro/repositories/sprint_workshop/native/nishimura/res/values/strings.xml \
+/Users/tomohiro/repositories/sprint_workshop/native/nishimura/bin/res/drawable-hdpi/ic_launcher.png \
+/Users/tomohiro/repositories/sprint_workshop/native/nishimura/bin/res/drawable-hdpi/icon.png \
+/Users/tomohiro/repositories/sprint_workshop/native/nishimura/bin/res/drawable-ldpi/ic_launcher.png \
+/Users/tomohiro/repositories/sprint_workshop/native/nishimura/bin/res/drawable-ldpi/icon.png \
+/Users/tomohiro/repositories/sprint_workshop/native/nishimura/bin/res/drawable-mdpi/ic_launcher.png \
+/Users/tomohiro/repositories/sprint_workshop/native/nishimura/bin/res/drawable-mdpi/icon.png \
+/Users/tomohiro/repositories/sprint_workshop/native/nishimura/bin/res/drawable-xhdpi/ic_launcher.png \
+/Users/tomohiro/repositories/sprint_workshop/native/nishimura/bin/res/drawable-xhdpi/icon.png \
+/Users/tomohiro/repositories/sprint_workshop/native/nishimura/bin/AndroidManifest.xml \
