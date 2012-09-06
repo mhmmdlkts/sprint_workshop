@@ -1,0 +1,32 @@
+#console {
+	position: relative;
+	top: 250px;
+}
+
+#stats {
+	float: left;
+	width: 200px;
+	height: 100px;
+	padding: 10px;
+	border: 1px solid black;
+
+}
+
+#shop {
+	float: left;
+	width: 400px;
+	height: 200px;
+	padding: 10px;
+	margin-left: 10px;
+	border: 1px solid black;
+}
+
+#shop .item {
+	float: left;
+	width: 80px;
+	height: 80px;
+	margin: 10px;
+	border: 1px solid black;
+	font-size: 12px;
+	text-align: center;
+}
