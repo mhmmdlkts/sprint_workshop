@@ -1,0 +1,21 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/GameController.cs">
+    <Files>
+      <File FileName="Assets/Scripts/BattleManager.cs" Line="114" Column="31" />
+      <File FileName="Assets/Scripts/View/StandbyView.cs" Line="12" Column="2" />
+      <File FileName="Assets/Plugins/View.cs" Line="12" Column="7" />
+      <File FileName="Assets/Scripts/GameController.cs" Line="38" Column="30" />
+      <File FileName="Assets/Scripts/StoneController.cs" Line="10" Column="2" />
+      <File FileName="Assets/Plugins/StatefulObject.cs" Line="5" Column="1" />
+      <File FileName="Assets/Photon Unity Networking/Plugins/PhotonNetwork/PhotonClasses.cs" Line="200" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="/Users/coolervinore/Documents/src/photon/Assets/Plugins/View.cs" line="282" />
+      <Breakpoint file="/Users/coolervinore/Documents/src/photon/Assets/Scripts/GameController.cs" line="59" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
