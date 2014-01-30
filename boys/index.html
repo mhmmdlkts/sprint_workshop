@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Boys 3</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+  <body>
+    <div id="stage">
+      
+      <div id="turn">1曲目: 1/5</div>
+      <div id="score"></div>
+      <div id="fever"></div>
+      <div id="black"></div>
+      <div id="cutin">
+        <div id="cutin-actors"></div>
+        <div id="fever-score"></div>
+      </div>
+
+      <div id="tension">
+        <div id="red-tension" class="energy">
+          <div class="bar"></div>
+        </div>
+        <div id="yellow-tension" class="energy">
+          <div class="bar"></div>
+        </div>
+        <div id="blue-tension" class="energy">
+          <div class="bar"></div>
+        </div>
+      </div>
+
+      <div class="lightboard" id="lightboard0">
+        <div class="circle" id="leftcircle0">
+          <img src="images/circle/red.png" />
+        </div>
+        <div class="circle" id="leftcircle1">
+          <img src="images/circle/red.png" />
+        </div>
+        <div class="circle" id="leftcircle2">
+          <img src="images/circle/red.png" />
+        </div>
+      </div>
+
+      <div class="lightboard" id="lightboard1">
+        <div class="circle" id="rightcircle0">
+          <img src="images/circle/red.png" />
+        </div>
+        <div class="circle" id="rightcircle1">
+          <img src="images/circle/red.png" />
+        </div>
+        <div class="circle" id="rightcircle2">
+          <img src="images/circle/red.png" />
+        </div>
+      </div>
+
+      <div class="spot" id="spot0"></div>
+      <div class="spot" id="spot1"></div>
+      <div id="center-spot"></div>
+
+      <div class="mainactor" id="leftactor">
+        <div class="score" id="leftscore"></div>
+      </div>
+      <div class="mainactor" id="rightactor">
+        <div class="score" id="rightscore"></div>
+      </div>
+      <div class="mainactor" id="centeractor">
+        <div class="score" id="centerscore"></div>
+      </div>
+
+      <div class="actor" id="actor0">
+        <div class="cooldown"></div>
+        <div class="energy">
+          <div class="bar"></div>
+        </div>
+        <div class="params" id="params0"></div>
+      </div>
+      <div class="actor" id="actor1">
+        <div class="cooldown"></div>
+        <div class="energy">
+          <div class="bar"></div>
+        </div>
+        <div class="params" id="params1"></div>
+      </div>
+      <div class="actor" id="actor2">
+        <div class="cooldown"></div>
+        <div class="energy">
+          <div class="bar"></div>
+        </div>
+        <div class="params" id="params2"></div>
+      </div>
+      <div class="actor" id="actor3">
+        <div class="cooldown"></div>
+        <div class="energy">
+          <div class="bar"></div>
+        </div>
+        <div class="params" id="params3"></div>
+      </div>
+      <div class="actor" id="actor4">
+        <div class="cooldown"></div>
+        <div class="energy">
+          <div class="bar"></div>
+        </div>
+        <div class="params" id="params4"></div>
+      </div>
+    </div>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+  </body>
+</html>
